@@ -1,14 +1,24 @@
-FROM php:8.2-cli
+FROM php:8.3-cli
 
-# Install dependencies
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     unzip \
     git \
     curl \
     libzip-dev \
-    zip
+    zip \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    default-mysql-client
 
-RUN docker-php-ext-install zip
+# Install PHP extensions
+RUN docker-php-ext-install \
+    pdo \
+    pdo_mysql \
+    mysqli \
+    zip \
+    gd
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -19,8 +29,8 @@ WORKDIR /app
 # Copy project
 COPY . .
 
-# Install Laravel dependencies
-RUN composer install
+# Install dependencies (بدون مشاكل)
+RUN composer install --ignore-platform-reqs
 
 # Expose port
 EXPOSE 10000
