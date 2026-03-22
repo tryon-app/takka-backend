@@ -1,39 +1,23 @@
 FROM php:8.3-cli
 
-# Install system dependencies
+# تثبيت الإضافات المطلوبة
 RUN apt-get update && apt-get install -y \
-    unzip \
-    git \
-    curl \
-    libzip-dev \
-    zip \
-    libpng-dev \
-    libonig-dev \
-    libxml2-dev \
-    default-mysql-client
+    git unzip curl libpng-dev libonig-dev libxml2-dev libzip-dev \
+    && docker-php-ext-install pdo pdo_mysql mysqli zip gd
 
-# Install PHP extensions
-RUN docker-php-ext-install \
-    pdo \
-    pdo_mysql \
-    mysqli \
-    zip \
-    gd
-
-# Install Composer
+# نسخ composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Set working directory
 WORKDIR /app
 
-# Copy project
+# نسخ المشروع
 COPY . .
 
-# Install dependencies (بدون مشاكل)
-RUN composer install --ignore-platform-reqs
+# تثبيت dependencies
+RUN composer install --no-dev --optimize-autoloader
 
-# Expose port
-EXPOSE 10000
+# صلاحيات
+RUN chmod -R 775 storage bootstrap/cache
 
-# Run Laravel
-CMD php artisan serve --host=0.0.0.0 --port=10000
+# تشغيل السيرفر من public
+CMD php -S 0.0.0.0:$PORT -t public
