@@ -56,6 +56,7 @@
 </head>
 
 <body>
+@php($siteDirection = session()->has('landing_site_direction') ? session('landing_site_direction') : 'ltr')
 <script>
     if (localStorage.landingTheme) {
         document.body.classList.add(localStorage.landingTheme);
@@ -64,6 +65,7 @@
 
 </script>
 <div class="preloader"></div>
+@sectionMissing('mobile_home_shell')
 <div class="navbar-top">
     <div class="container">
         <div class="navbar-top-wrapper">
@@ -176,9 +178,11 @@
         </div>
     </div>
 </header>
+@endif
 
 @yield('content')
 
+@sectionMissing('mobile_home_shell')
 <div class="py-75 subscribe-newsletter">
     <div class="container">
         <div class="row justify-content-between">
@@ -279,6 +283,7 @@
         </div>
     </div>
 </footer>
+@endif
 
 <script src="{{asset('public/assets/landing')}}/js/jquery-3.6.0.min.js"></script>
 <script src="{{asset('public/assets/landing')}}/js/viewport.jquery.js"></script>
